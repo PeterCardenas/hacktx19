@@ -1,9 +1,16 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const locationSchema = mongoose.Schema({
-
+  regionId: {
+    type: String,
+    required: [true, "Region ID is required"]
+  },
+  region: {
+    type: String,
+    required: [true, "Region is required"]
+  }
 });
 
-const Location = mongoose.model('Location', locationSchema);
+const Location = mongoose.model("Location", locationSchema);
 
-module.exports = User;
+module.exports = Location;
