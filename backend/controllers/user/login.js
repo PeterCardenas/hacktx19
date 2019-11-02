@@ -22,7 +22,6 @@ module.exports.registration = async (req, res) => {
         });
 
         user.save().exec();
-        
     } catch (error) {
         logger.error(`Error in registration ${error.stack}`);
     }

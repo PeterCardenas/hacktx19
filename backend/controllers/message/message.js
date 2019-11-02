@@ -4,10 +4,10 @@ const locate = require("../../util/locate");
 
 module.exports.getMessages = async (req,res) => {
     try {
-        let lat = req.body.lat;
-        let long = req.body.long;
-        let date = req.body.date;
-        let dateLastCalled = req.body.dateLastCalled;
+        let lat = req.params.lat;
+        let long = req.params.long;
+        let date = req.params.date;
+        let dateLastCalled = req.params.dateLastCalled;
         let messages;
 
         let {
@@ -36,7 +36,6 @@ module.exports.getMessages = async (req,res) => {
         res.send ({
             messages : parseMessages
         })
-        
     } catch (error) {
         logger.error(`Error in messages: ${error.stack}`);
     }
@@ -54,20 +53,20 @@ module.exports.createMessage = async (req, res) => {
             city,
             state
         } = await locate.getAddress(lat, long);
-        
+
         let region = await Location.findOne({ region : city}).exec()
 
         let regionId = region.regionId;
 
 
-        let message = new Message({
+        let newMessage = new Message({
             regionId : regionId,
             userId : userId,
             message : message,
             date : date
         })
 
-        message.save().exec();
+        newMessage.save().exec();
 
     } catch (error) {
         logger.error(`Error in messages: ${error.stack}`);
