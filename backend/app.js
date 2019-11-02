@@ -2,7 +2,7 @@ let express = require('express');
 global.CONFIG = require("./config/config");
 
 const mongoDb = require("./util/db");
-const logger = require('./util/logger')
+const logger = require('./util/logger');
 
 mongoDb.connect();
 

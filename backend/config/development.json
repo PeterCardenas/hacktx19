@@ -8,6 +8,7 @@
         "useFindAndModify": false,
         "useUnifiedTopology": true
     },
+    "googleMapsApiKey": "AIzaSyD1qNq1df6Q9NhZF2embHSoF69a5Q7UICg",
     "logConfig": {
         "consoleLogConfig": {
             "level": "info",
