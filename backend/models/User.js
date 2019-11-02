@@ -3,10 +3,6 @@ const bcrypt = require("bcrypt");
 const saltWorkFactor = 10;
 
 const userSchema = mongoose.Schema({
-  regionId: {
-    type: String,
-    required: [true, "Region is required"]
-  },
   userId: {
       type: String,
       required: [true, "User ID is required"]
