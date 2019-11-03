@@ -24,11 +24,11 @@ module.exports.getMessages = async (req,res) => {
 
         if (dateLastCalled) {
             messages = await Message.find({ regionId : regionId, chatName : chatName, date : { $gt : dateLastCalled, $lt : date }}).sort({
-                date : -1
+                date : 1
             }).exec()
         } else {
             messages = await Message.find({ regionId : regionId, chatName : chatName }).sort({
-                date : -1
+                date : 1
             }).exec()
         }
 
