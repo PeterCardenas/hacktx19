@@ -9,6 +9,7 @@
         "useUnifiedTopology": true
     },
     "googleMapsApiKey": "AIzaSyD1qNq1df6Q9NhZF2embHSoF69a5Q7UICg",
+    "openWeatherApiKey": "7b8dd6f51a99f8ed5ac07e600d8e3aab",
     "logConfig": {
         "consoleLogConfig": {
             "level": "info",

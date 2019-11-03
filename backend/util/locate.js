@@ -14,10 +14,8 @@ module.exports.getAddress = async (lat, long) => {
         if (!err) {
           let res = response.json.results[0];
           let city = res.address_components[0].long_name;
-          let state = res.address_components[2].long_name;
           resolve({
-              city: city,
-              state: state
+              city: city
           });
         } else if (err.json) {
           logger.error(err.json.error_message);

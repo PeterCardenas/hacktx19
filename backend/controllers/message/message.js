@@ -1,31 +1,34 @@
 const Message = require("../../models/Message");
 const Location = require("../../models/Location");
 const locate = require("../../util/locate");
+const ChatBox = require("../../models/ChatBox");
 
 module.exports.getMessages = async (req,res) => {
     try {
-        let lat = req.params.lat;
-        let long = req.params.long;
-        let date = req.params.date;
-        let dateLastCalled = req.params.dateLastCalled;
+        let lat = req.body.lat;
+        let long = req.body.long;
+        let date = req.body.date;
+        let dateLastCalled = req.body.dateLastCalled;
+        let chatName = req.body.chatName;
         let messages;
 
         let {
-            city,
-            state
+            city
         } = await locate.getAddress(lat, long);
 
-        let region = await Location.findOne({ region : city}).exec()
+        let region = await Location.findOne({
+            region : city
+        }).exec()
 
         let regionId = region.regionId;
 
         if (dateLastCalled) {
-            messages = await Message.find({ regionId : regionId, date : { $gt : dateLastCalled, $lt : date }}).sort({
-                date : -1
+            messages = await Message.find({ regionId : regionId, chatName : chatName, date : { $gt : dateLastCalled, $lt : date }}).sort({
+                date : 1
             }).exec()
         } else {
-            messages = await Message.find({ regionId : regionId}).sort({
-                date : -1
+            messages = await Message.find({ regionId : regionId, chatName : chatName }).sort({
+                date : 1
             }).exec()
         }
 
@@ -36,6 +39,7 @@ module.exports.getMessages = async (req,res) => {
         res.send ({
             messages : parseMessages
         })
+
     } catch (error) {
         logger.error(`Error in messages: ${error.stack}`);
     }
@@ -48,6 +52,7 @@ module.exports.createMessage = async (req, res) => {
         let lat = req.body.lat;
         let long = req.body.long;
         let date = req.body.date;
+        let chatName = req.body.chatName;
 
         let {
             city,
@@ -58,12 +63,12 @@ module.exports.createMessage = async (req, res) => {
 
         let regionId = region.regionId;
 
-
-        let newMessage = new Message({
+        let message = new Message({
             regionId : regionId,
             userId : userId,
             message : message,
-            date : date
+            date : date,
+            chatName : chatName
         })
 
         await newMessage.save();
