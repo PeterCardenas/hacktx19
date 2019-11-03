@@ -31,15 +31,16 @@ module.export.getRooms = async (req, res) => {
             }
         }
 
+        let isExtreme = require('../../util/weather')(lat, long)
+
+        // set extreme weather as top priority chatbox regardless of popularity
+        if (isExtreme){
+            roomMap.set("EMERGENCY", 9007199254740991);
+        }
+
         let mapSort = new Map([...roomMap.entries()].sort((a, b) => b[1] - a[1]));
 
         let rooms = mapSort.keys();
-
-        let isExtreme = require('../../util/weather')(lat, long)
-
-        if (isExtreme){
-            mapSort
-        }
 
         res.send({
             rooms : rooms
