@@ -4,7 +4,6 @@ const uuid = require('uuid/v4');
 
 module.exports.registration = async (req, res) => {
     try {
-
         let userId = uuid();
         let username = req.body.username;
         let password = req.body.password;
@@ -21,7 +20,19 @@ module.exports.registration = async (req, res) => {
             sex : sex
         });
 
-        user.save().exec();
+        user.save((err, response) => {
+            if (!err) {
+                res.send({
+                    success: true,
+                    userId: userId
+                });
+                logger.info(`Registration API Success`);
+            } else {
+                res.send({
+                  success: false
+                });
+            }
+        });
     } catch (error) {
         logger.error(`Error in registration ${error.stack}`);
     }
@@ -33,12 +44,17 @@ module.exports.login = async (req, res) => {
         let password = req.body.password;
 
         let user = await User.findOne({ username : username }).exec();
+        if (user == null) {
+            res.send({
+                success: false
+            });
+        } else {
+            let validate = await user.validatePassword(password);
 
-        let validate = await user.validatePassword(password);
-
-        res.send({
-            success : validate
-        })
+            res.send({
+              success: validate
+            });
+        }
 
     } catch (error) {
         logger.error(`Error in login ${error.stack}`);

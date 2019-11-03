@@ -66,7 +66,10 @@ module.exports.createMessage = async (req, res) => {
             date : date
         })
 
-        newMessage.save().exec();
+        await newMessage.save();
+        res.send({
+            success: true
+        });
 
     } catch (error) {
         logger.error(`Error in messages: ${error.stack}`);
