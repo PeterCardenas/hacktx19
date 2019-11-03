@@ -15,9 +15,22 @@ module.exports.getWeatherData = async (lat, long) => {
           method: "GET",
           url: WEATHER_URL
         }).then(response => {
-            var weatherID = response.data.weather[0].id;
-            logger.info(weatherID);
+            let weatherID = response.data.weather[0].id;
             resolve(extemeWeather.includes(weatherID));
         });
     });
 }
+
+module.exports.getCity = async (lat, long) => {
+    return new Promise((resolve, reject) => {
+      const WEATHER_URL = urlStart.concat(lat, urlMid, long, urlEnd, key);
+      axios({
+        method: "GET",
+        url: WEATHER_URL
+      }).then(response => {
+          logger.info(lat + ', ' + long);
+        let city = response.data.name;
+        resolve(city);
+      });
+    });
+};

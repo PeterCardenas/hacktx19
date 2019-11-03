@@ -1,16 +1,18 @@
 const Message = require("../../models/Message");
 const Location = require("../../models/Location");
+const logger = require('../../util/logger');
 const locate = require("../../util/locate");
 const messageCensor = require ("../../controllers/message/messageCensor");
 
 module.exports.getMessages = async (req,res) => {
     try {
-        let lat = req.body.lat;
-        let long = req.body.long;
-        let date = req.body.date;
-        let dateLastCalled = req.body.dateLastCalled;
-        let chatName = req.body.chatName;
+        let lat = req.query.lat;
+        let long = req.query.long;
+        let date = req.query.date;
+        let dateLastCalled = req.query.dateLastCalled;
+        let chatName = req.query.chatName;
         let messages;
+        logger.info('Got to get messages');
 
         let {
             city
@@ -18,18 +20,16 @@ module.exports.getMessages = async (req,res) => {
 
         let region = await Location.findOne({
             region : city
-        }).exec()
-
-        let regionId = region.regionId;
+        }).exec();
 
         if (dateLastCalled) {
-            messages = await Message.find({ regionId : regionId, chatName : chatName, date : { $gt : dateLastCalled, $lt : date }}).sort({
+            messages = await Message.find({ regionId : region.regionId, chatName : chatName, date : { $gt : dateLastCalled, $lt : date }}).sort({
                 date : 1
-            }).exec()
+            }).exec();
         } else {
-            messages = await Message.find({ regionId : regionId, chatName : chatName }).sort({
+            messages = await Message.find({ regionId : region.regionId, chatName : chatName }).sort({
                 date : 1
-            }).exec()
+            }).exec();
         }
 
         let parseMessages = messages.map(msg => {
@@ -41,7 +41,7 @@ module.exports.getMessages = async (req,res) => {
         })
 
     } catch (error) {
-        logger.error(`Error in messages: ${error.stack}`);
+        logger.error(`Error in messages get: ${error.stack}`);
     }
 }
 
@@ -55,15 +55,18 @@ module.exports.createMessage = async (req, res) => {
         let chatName = req.body.chatName;
 
         let {
-            city,
-            state
+            city
         } = await locate.getAddress(lat, long);
 
         let region = await Location.findOne({ region : city}).exec()
 
         let regionId = region.regionId;
 
+<<<<<<< HEAD
         let msg = new Message({
+=======
+        let newMessage = new Message({
+>>>>>>> a00a8e8fd6146b8cea41bc5d569f54066f8c039e
             regionId : regionId,
             userId : userId,
             message : message,
@@ -71,9 +74,16 @@ module.exports.createMessage = async (req, res) => {
             chatName : chatName
         })
 
+<<<<<<< HEAD
         await msg.save();
+=======
+        await newMessage.save();
+        res.send({
+            success: true
+        });
+>>>>>>> a00a8e8fd6146b8cea41bc5d569f54066f8c039e
 
     } catch (error) {
-        logger.error(`Error in messages: ${error.stack}`);
+        logger.error(`Error in messages create: ${error.stack}`);
     }
 }
