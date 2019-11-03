@@ -1,7 +1,7 @@
 {
     "applicationName": "backend",
     "PORT": 8080,
-    "mongoDbUrl": "mongodb+srv://PeterCardenas:o6ug7%23gYLc9N@cluster0-5isru.mongodb.net/test?retryWrites=true&w=majority",
+    "mongoDbUrl": "mongodb+srv://PeterCardenas:o6ug7%23gYLc9N@cluster0-5isru.mongodb.net/HackTX?retryWrites=true&w=majority",
     "mongoConfig": {
         "useNewUrlParser": true,
         "useCreateIndex": true,
