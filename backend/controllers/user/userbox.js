@@ -10,7 +10,9 @@ module.exports.enterBox = async (req, res) => {
 
         user.chatName = chatName;
         await user.save();
-
+        res.send({
+            success: true
+        });
         //alternate
         //user.updateOne({userId : userId}, {$set: {chatName : chatBox}})
     } catch (error) {

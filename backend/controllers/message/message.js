@@ -7,11 +7,10 @@ module.exports.getMessages = async (req,res) => {
     try {
         let lat = req.query.lat;
         let long = req.query.long;
-        let date = req.query.date;
-        let dateLastCalled = req.query.dateLastCalled;
+        let date = parseInt(req.query.date, 10);
+        let dateLastCalled = parseInt(req.query.dateLastCalled, 10);
         let chatName = req.query.chatName;
         let messages;
-        logger.info('Got to get messages');
 
         let {
             city
@@ -21,7 +20,10 @@ module.exports.getMessages = async (req,res) => {
             region : city
         }).exec();
 
-        if (dateLastCalled) {
+
+        if (dateLastCalled != 0) {
+            date = new Date(date);
+            dateLastCalled = new Date(dateLastCalled);
             messages = await Message.find({ regionId : region.regionId, chatName : chatName, date : { $gt : dateLastCalled, $lt : date }}).sort({
                 date : 1
             }).exec();
@@ -33,7 +35,7 @@ module.exports.getMessages = async (req,res) => {
 
         let parseMessages = messages.map(msg => {
             return msg.message;
-        })
+        });
 
         res.send ({
             messages : parseMessages

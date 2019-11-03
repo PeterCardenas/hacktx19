@@ -15,6 +15,7 @@ import styles from './styles.js';
 import config from '../../config';
 import { ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-navigation';
+import Drawer from 'react-native-drawer';
 
 class Chat extends Component {
     constructor(props) {
@@ -24,7 +25,7 @@ class Chat extends Component {
             messages: [],
             chatboxes: [],
             chatName: "",
-            dateLastCalled: null,
+            dateLastCalled: 0,
             lat: 0,
             long: 0,
             userId: this.props.navigation.getParam('userId', null)
@@ -56,16 +57,26 @@ class Chat extends Component {
             long: pos.coords.longitude
         });
        let chatboxes = await this.getChatboxes();
-       alert(chatboxes.length);
-       this.setState({
-           chatboxes: chatboxes,
-           chatName: chatboxes[0]
-       });
+       console.log(chatboxes);
+       if (chatboxes.length == 0) {
+           this.setState({
+               chatName: "general",
+               chatboxes: ["general"]
+           });
+           this.createChatbox();
+       }
+       else {
+           this.setState({
+             chatboxes: chatboxes,
+             chatName: chatboxes[0],
+           });
+       }
        await this.updateChatbox();
        let messages = await this.getMessages();
        this.setState({
            messages: messages
        });
+        setInterval(this.getMessages, 1000);
     }
 
     messageChanged = (text) => {
@@ -127,7 +138,7 @@ class Chat extends Component {
     getMessages = async () => {
         return new Promise(async (resolve, reject) => {
             let date = Date.now();
-            let res = await fetch(`${config.url}/message/get?lat=${this.state.lat}&long=${this.state.long}&date=${this.state.date}&dateLastCalled=${this.state.dateLastCalled}&chatName=${this.state.chatName}`, {
+            let res = await fetch(`${config.url}/message/get?lat=${this.state.lat}&long=${this.state.long}&date=${date}&dateLastCalled=${this.state.dateLastCalled}&chatName=${this.state.chatName}`, {
                 method: 'GET',
                 headers: {
                     Accept: 'application/json',
@@ -173,24 +184,72 @@ class Chat extends Component {
         );
     }
 
+    renderDrawer = () => {
+        return (
+          <View
+            style={{
+              justifyContent: 'space-evenly',
+              alignContent: 'center',
+              marginTop: 50,
+              marginLeft: 10
+            }}>
+            <FlatList
+              data={this.state.chatboxes}
+              extraData={this.state.chatboxes}
+              keyExtractor={(item, index) => index}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  onPress={async () => {
+                    this.setState({
+                      chatName: item,
+                    });
+                    await this.updateChatbox();
+                    await this.getMessages();
+                    this.drawer.close();
+                  }}>
+                  <Text>{item}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        );
+    }
+
+    openDrawer = () => {
+        this.drawer.open();
+    }
+
     render() {
         return (
-        <View>
-          <SafeAreaView>
-            <FlatList
-              data={this.state.messages}
-              extraData={this.state.messages}
-              renderItem={({item}) => this.renderMessage(item)}
-            />
-          </SafeAreaView>
-          <TextInput
-            placeholder="Chat here..."
-            onChangeText={this.messageChanged}
-            onSubmitEditing={this.postMessage}
-            value={this.state.message}
-          />
-          <TouchableOpacity></TouchableOpacity>
-        </View>
+          <Drawer
+            ref={ref => (this.drawer = ref)}
+            content={this.renderDrawer()}>
+            <View
+              style={{
+                justifyContent: 'space-evenly',
+                alignContent: 'center',
+                marginTop: 50,
+                marginLeft: 10,
+              }}>
+              <TouchableOpacity onPress={this.openDrawer}>
+                <Text>Find Channels</Text>
+              </TouchableOpacity>
+              <SafeAreaView>
+                <FlatList
+                  data={this.state.messages}
+                  extraData={this.state.messages}
+                  keyExtractor={(item, index) => index}
+                  renderItem={({item}) => this.renderMessage(item)}
+                />
+              </SafeAreaView>
+              <TextInput
+                placeholder="Chat here..."
+                onChangeText={this.messageChanged}
+                onSubmitEditing={this.postMessage}
+                value={this.state.message}
+              />
+            </View>
+          </Drawer>
         );
     }
 }
