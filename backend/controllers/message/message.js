@@ -22,17 +22,26 @@ module.exports.getMessages = async (req,res) => {
         }).exec();
 
 
-        if (dateLastCalled != 0) {
-            date = new Date(date);
-            dateLastCalled = new Date(dateLastCalled);
-            messages = await Message.find({ regionId : region.regionId, chatName : chatName, date : { $gt : dateLastCalled, $lt : date }}).sort({
-                date : 1
-            }).exec();
-        } else {
-            messages = await Message.find({ regionId : region.regionId, chatName : chatName }).sort({
-                date : 1
-            }).exec();
-        }
+        // if (dateLastCalled != 0) {
+        //     date = new Date(date);
+        //     dateLastCalled = new Date(dateLastCalled);
+        //     messages = await Message.find({ regionId : region.regionId, chatName : chatName, date : { $gt : dateLastCalled, $lt : date }}).sort({
+        //         date : 1
+        //     }).exec();
+        // } else {
+        //     messages = await Message.find({ regionId : region.regionId, chatName : chatName }).sort({
+        //         date : 1
+        //     }).exec();
+        // }
+
+        messages = await Message.find({
+          regionId: region.regionId,
+          chatName: chatName
+        })
+          .sort({
+            date: 1
+          })
+          .exec();
 
         let parseMessages = messages.map(msg => {
             return msg.message;
@@ -49,7 +58,7 @@ module.exports.getMessages = async (req,res) => {
 
 module.exports.createMessage = async (req, res) => {
     try {
-        let message = await messageCensor.censorMessage(req.body.message);
+        let message = messageCensor.censorMessage(req.body.message);
         let userId = req.body.userId;
         let lat = req.body.lat;
         let long = req.body.long;
@@ -64,26 +73,18 @@ module.exports.createMessage = async (req, res) => {
 
         let regionId = region.regionId;
 
-<<<<<<< HEAD
-        let msg = new Message({
-=======
         let newMessage = new Message({
->>>>>>> a00a8e8fd6146b8cea41bc5d569f54066f8c039e
             regionId : regionId,
             userId : userId,
             message : message,
             date : date,
             chatName : chatName
-        })
+        });
 
-<<<<<<< HEAD
-        await msg.save();
-=======
         await newMessage.save();
         res.send({
             success: true
         });
->>>>>>> a00a8e8fd6146b8cea41bc5d569f54066f8c039e
 
     } catch (error) {
         logger.error(`Error in messages create: ${error.stack}`);

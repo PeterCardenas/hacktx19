@@ -153,8 +153,7 @@ class Registration extends Component {
                 }}
                 returnKeyType={'next'}
                 onChangeText={this.updateUsername}
-                onSubmitEditing={({nativeEvent}) => {
-                  this.validEmail(nativeEvent.text);
+                onSubmitEditing={() => {
                   this.fifthTextInput.focus();
                 }}
                 blurOnSubmit={false}

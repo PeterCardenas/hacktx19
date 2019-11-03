@@ -10,8 +10,6 @@ mongoDb.connect();
 let app = express();
 app.use(bodyParser.json());
 
-require('./controllers/message/messageCensor').censorMessage("ass cakes fuck bitch bi+ch");
-
 const router = require('./controllers');
 app.use('/', router);
 
