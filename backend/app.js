@@ -8,8 +8,6 @@ mongoDb.connect();
 
 let app = express();
 
-require('./util/weather').getWeatherData("Austin");
-
 const router = require('./controllers');
 app.use('/', router);
 

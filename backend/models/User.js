@@ -26,6 +26,10 @@ const userSchema = mongoose.Schema({
   sex: {
       type: String,
       required: [true, "Sex is required"]
+  },
+  chatName: {
+      type: String,
+      default: "None"
   }
 });
 

@@ -16,6 +16,10 @@ const messageSchema = mongoose.Schema({
   date: {
       type: Date,
       required: [true, "Date is required"]
+  },
+  chatName: {
+      type: String,
+      required: [true, "chat name is required"]
   }
 });
 
