@@ -62,11 +62,14 @@ module.exports.createMessage = async (req, res) => {
 
         let regionId = region.regionId;
 
-<<<<<<< HEAD
-        let msg = new Message({
-=======
+        if (message.toLowerCase() == "help" && chatName == "EMERGENCY") {
+            let user = User.findOne({ userId : userId }).exec();
+            let newMsg = "Name: ";
+            newMsg = newMsg.concat(user.name, " Age: ", user.age, " Sex: ", user.sex, "  Lat: ", lat, " Long: ", long);
+            message = newMsg;
+        }
+
         let newMessage = new Message({
->>>>>>> a00a8e8fd6146b8cea41bc5d569f54066f8c039e
             regionId : regionId,
             userId : userId,
             message : message,
@@ -74,14 +77,10 @@ module.exports.createMessage = async (req, res) => {
             chatName : chatName
         })
 
-<<<<<<< HEAD
-        await msg.save();
-=======
         await newMessage.save();
         res.send({
             success: true
         });
->>>>>>> a00a8e8fd6146b8cea41bc5d569f54066f8c039e
 
     } catch (error) {
         logger.error(`Error in messages create: ${error.stack}`);
