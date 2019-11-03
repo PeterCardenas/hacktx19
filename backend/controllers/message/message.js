@@ -1,7 +1,6 @@
 const Message = require("../../models/Message");
 const Location = require("../../models/Location");
 const locate = require("../../util/locate");
-const ChatBox = require("../../models/ChatBox");
 
 module.exports.getMessages = async (req,res) => {
     try { 
@@ -71,7 +70,7 @@ module.exports.createMessage = async (req, res) => {
             chatName : chatName
         })
 
-        await message.save().exec();
+        await message.save();
 
     } catch (error) {
         logger.error(`Error in messages: ${error.stack}`);

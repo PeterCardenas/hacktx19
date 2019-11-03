@@ -8,6 +8,7 @@ module.export.getRooms = async (req, res) => {
         let lat = req.body.lat;
         let long = req.body.long;
 
+
         let {
             city
         } = await locate.getAddress(lat, long);
@@ -17,8 +18,6 @@ module.export.getRooms = async (req, res) => {
         }).exec()
 
         let regionId = region.regionId;
-
-       // let rooms = await ChatBox.find({ regionId : regionId }).exec();
 
         let users = await User.find({ regionId : regionId}).lean().exec();
 
@@ -32,9 +31,15 @@ module.export.getRooms = async (req, res) => {
             }
         }
 
-        const mapSort = new Map([...roomMap.entries()].sort((a, b) => b[1] - a[1]));
+        let mapSort = new Map([...roomMap.entries()].sort((a, b) => b[1] - a[1]));
 
         let rooms = mapSort.keys();
+
+        let isExtreme = require('../../util/weather')(lat, long)
+
+        if (isExtreme){
+            mapSort
+        }
 
         res.send({
             rooms : rooms
@@ -52,8 +57,7 @@ module.export.createRoom = async (req, res) => {
         let chatName = req.body.chatName;
 
         let {
-            city,
-            state
+            city
         } = await locate.getAddress(lat, long);
         
         let region = await Location.findOne({ region : city}).exec()
@@ -65,7 +69,7 @@ module.export.createRoom = async (req, res) => {
             chatName : chatName
         })
 
-        await chatbox.save().exec();
+        await chatbox.save();
 
     } catch (error) {
         logger.error(`Error in chatbox: ${error.stck}`);
