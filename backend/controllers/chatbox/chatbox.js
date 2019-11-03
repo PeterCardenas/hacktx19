@@ -3,21 +3,13 @@ const locate = require("../../util/locate");
 const ChatBox = require("../../models/ChatBox");
 const User = require("../../models/User");
 const logger = require('../../util/logger');
+const weather = require("../../util/weather");
 
 module.exports.getRooms = async (req, res) => {
     try {
-<<<<<<< HEAD
-        let lat = parseInt(req.query.lat, 10);
-        let long = parseInt(req.query.long, 10);
-=======
-        let lat = req.body.lat;
-        let long = req.body.long;
-
-
->>>>>>> 25174569a02a59f9dcef412dc6faa68283389ddc
-        let {
-            city
-        } = await locate.getAddress(lat, long);
+        let lat = parseFloat(req.query.lat);
+        let long = parseFloat(req.query.long);
+        let {city} = await locate.getAddress(lat, long);
         logger.info(city);
 
         let region = await Location.findOne({
@@ -38,21 +30,14 @@ module.exports.getRooms = async (req, res) => {
             }
         }
 
-<<<<<<< HEAD
         let rooms = Object.keys(roomMap);
         rooms.sort((room1, room2) => roomMap[room2] - roomMap[room1]);
-=======
-        let isExtreme = require('../../util/weather')(lat, long)
+        let isExtreme = weather.getWeatherData(lat, long);
 
         // set extreme weather as top priority chatbox regardless of popularity
-        if (isExtreme){
-            roomMap.set("EMERGENCY", 9007199254740991);
+        if (isExtreme) {
+          roomMap["EMERGENCY"] = 9007199254740991;
         }
-
-        let mapSort = new Map([...roomMap.entries()].sort((a, b) => b[1] - a[1]));
-
-        let rooms = mapSort.keys();
->>>>>>> 25174569a02a59f9dcef412dc6faa68283389ddc
 
         res.send({
             rooms : rooms

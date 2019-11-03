@@ -12,7 +12,6 @@ module.exports.getAddress = async (lat, long) => {
           "administrative_area_level_2|administrative_area_level_1|locality"
       },
       (err, response) => {
-        console.log(JSON.stringify(response.json));
         if (err == null) {
           let res = response.json.results[0];
           let city = res.address_components[0].long_name;
