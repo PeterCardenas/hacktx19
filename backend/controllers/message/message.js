@@ -73,6 +73,16 @@ module.exports.createMessage = async (req, res) => {
 
         let regionId = region.regionId;
 
+<<<<<<< HEAD
+=======
+        if (message.toLowerCase() == "help" && chatName == "EMERGENCY") {
+            let user = await User.findOne({ userId : userId }).exec();
+            let newMsg = "Name: ";
+            newMsg = newMsg.concat(user.name, " Age: ", user.age, " Sex: ", user.sex, " Lat: ", lat, " Long: ", long);
+            message = newMsg;
+        }
+
+>>>>>>> 1fbe8a2fe18523d2b48a7357bb66913f1537ff99
         let newMessage = new Message({
             regionId : regionId,
             userId : userId,
