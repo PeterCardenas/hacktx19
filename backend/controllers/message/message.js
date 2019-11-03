@@ -1,6 +1,7 @@
 const Message = require("../../models/Message");
 const Location = require("../../models/Location");
 const locate = require("../../util/locate");
+const messageCensor = require ("../../controllers/message/messageCensor");
 
 module.exports.getMessages = async (req,res) => {
     try {
@@ -46,7 +47,7 @@ module.exports.getMessages = async (req,res) => {
 
 module.exports.createMessage = async (req, res) => {
     try {
-        let message = req.body.message;
+        let message = await messageCensor.censorMessage(req.body.message);
         let userId = req.body.userId;
         let lat = req.body.lat;
         let long = req.body.long;
@@ -62,7 +63,7 @@ module.exports.createMessage = async (req, res) => {
 
         let regionId = region.regionId;
 
-        let message = new Message({
+        let msg = new Message({
             regionId : regionId,
             userId : userId,
             message : message,
@@ -70,14 +71,7 @@ module.exports.createMessage = async (req, res) => {
             chatName : chatName
         })
 
-<<<<<<< HEAD
-        await message.save();
-=======
-        await newMessage.save();
-        res.send({
-            success: true
-        });
->>>>>>> 0f4c8c1e2e5f5792a4eb7360ffab07047b59212e
+        await msg.save();
 
     } catch (error) {
         logger.error(`Error in messages: ${error.stack}`);
