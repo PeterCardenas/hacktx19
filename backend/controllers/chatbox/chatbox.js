@@ -2,50 +2,48 @@ const Location = require("../../models/Location");
 const locate = require("../../util/locate");
 const ChatBox = require("../../models/ChatBox");
 const User = require("../../models/User");
+const logger = require('../../util/logger');
 
-module.export.getRooms = async (req, res) => {
+module.exports.getRooms = async (req, res) => {
     try {
-        let lat = req.body.lat;
-        let long = req.body.long;
-
+        let lat = parseInt(req.query.lat, 10);
+        let long = parseInt(req.query.long, 10);
         let {
             city
         } = await locate.getAddress(lat, long);
+        logger.info(city);
 
-        let region = await Location.findOne({ 
+        let region = await Location.findOne({
             region : city
-        }).exec()
+        }).exec();
 
         let regionId = region.regionId;
 
-       // let rooms = await ChatBox.find({ regionId : regionId }).exec();
-
         let users = await User.find({ regionId : regionId}).lean().exec();
 
-        let roomMap = new Map();
+        let roomMap = {};
         for (var user of users) {
             let chatName = user.chatName;
-            if (roomMap.get(chatName)) {
-                roomMap.set(chatName, 1 + roomMap.get(chatName));
+            if (roomMap[chatName]) {
+                roomMap[chatName] += 1;
             } else {
-                roomMap.set(chatName, 1);
+                roomMap[chatName] = 1;
             }
         }
 
-        const mapSort = new Map([...roomMap.entries()].sort((a, b) => b[1] - a[1]));
-
-        let rooms = mapSort.keys();
+        let rooms = Object.keys(roomMap);
+        rooms.sort((room1, room2) => roomMap[room2] - roomMap[room1]);
 
         res.send({
             rooms : rooms
         });
-        
+
     } catch (error) {
-        logger.error(`Error in chatbox: ${error.stack}`);
+        logger.error(`Error in chatbox get: ${error}`);
     }
 }
 
-module.export.createRoom = async (req, res) => {
+module.exports.createRoom = async (req, res) => {
     try {
         let lat = req.body.lat;
         let long = req.body.long;
@@ -55,8 +53,8 @@ module.export.createRoom = async (req, res) => {
             city,
             state
         } = await locate.getAddress(lat, long);
-        
-        let region = await Location.findOne({ region : city}).exec()
+
+        let region = await Location.findOne({ region : city}).exec();
 
         let regionId = region.regionId;
 
@@ -65,9 +63,9 @@ module.export.createRoom = async (req, res) => {
             chatName : chatName
         })
 
-        await chatbox.save().exec();
+        await chatbox.save();
 
     } catch (error) {
-        logger.error(`Error in chatbox: ${error.stck}`);
+        logger.error(`Error in chatbox create: ${error.stck}`);
     }
 }

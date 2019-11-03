@@ -4,11 +4,11 @@ const logger = require('../../util/logger');
 module.exports.enterBox = async (req, res) => {
     try {
         let userId = req.body.userId;
-        let chatBox = req.body.chatBox;
+        let chatName = req.body.chatName;
 
         let user = await User.findOne({ userId : userId }).exec();
 
-        user.chatName = chatBox;
+        user.chatName = chatName;
         await user.save();
 
         //alternate

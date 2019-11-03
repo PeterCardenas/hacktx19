@@ -8,14 +8,16 @@ module.exports.getAddress = async (lat, long) => {
     googleMapsClient.reverseGeocode(
       {
         latlng: [lat, long],
-        result_type: "locality"
+        result_type:
+          "administrative_area_level_2|administrative_area_level_1|locality"
       },
       (err, response) => {
-        if (!err) {
+        console.log(JSON.stringify(response.json));
+        if (err == null) {
           let res = response.json.results[0];
           let city = res.address_components[0].long_name;
           resolve({
-              city: city
+            city: city
           });
         } else if (err.json) {
           logger.error(err.json.error_message);

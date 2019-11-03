@@ -44,14 +44,13 @@ class Registration extends Component {
     let res = await this.register();
 
     if (!res.success) {
-        alert("Please fix your sign in bro")
+      alert('Fix your sign in bro');
     } else {
         await this.storeDataLocal(res.userId);
-        this.props.navigation.navigate('Chat');
+        this.props.navigation.navigate('Chat', {userId: res.userId});
     }
   };
 
-  // Store sessionID locally in async storage
   storeDataLocal = async session_id => {
     try {
       await AsyncStorage.setItem('@unique_id', session_id);
@@ -73,7 +72,7 @@ class Registration extends Component {
           username: this.state.username,
           password: this.state.password,
           sex: this.state.sex,
-          age: this.state.age
+          age: this.state.age,
         }),
       })
         .then(response => response.json())
